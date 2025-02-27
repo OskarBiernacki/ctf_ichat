@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chat</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='site_style.css') }}">
+    <style>
+        body {
+            display: flex;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        .sidebar {
+            width: 250px;
+            height: 100%;
+            background-color: #343a40;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+        .sidebar h2 {
+            margin: 0;
+            margin-bottom: 20px;
+        }
+        .sidebar .user {
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: #007bff;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .sidebar .user:hover {
+            background-color: #0056b3;
+        }
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .chat-header {
+            background-color: #007bff;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background-color: #f4f4f4;
+        }
+        .message {
+            margin-bottom: 20px;
+        }
+        .message .sender {
+            font-weight: bold;
+        }
+        .message .content {
+            margin-top: 5px;
+        }
+        .chat-input {
+            display: flex;
+            padding: 20px;
+            background-color: #fff;
+            border-top: 1px solid #ccc;
+        }
+        .chat-input input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+        .chat-input button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+        }
+        .chat-input button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>Users</h2>
+        <div class="user">User 1</div>
+        <div class="user">User 2</div>
+        <div class="user">User 3</div>
+    </div>
+    <div class="chat-container">
+        <div class="chat-header">
+            <h2>Chat with User 1</h2>
+        </div>
+        <div class="chat-messages">
+            <div class="message">
+                <div class="sender">User 1</div>
+                <div class="content">Hello!</div>
+            </div>
+            <div class="message">
+                <div class="sender">You</div>
+                <div class="content">Hi there!</div>
+            </div>
+        </div>
+        <div class="chat-input">
+            <input type="text" placeholder="Type a message...">
+            <button>Send</button>
+        </div>
+    </div>
+</body>
+</html>
