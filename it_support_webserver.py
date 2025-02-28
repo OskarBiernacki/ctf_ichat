@@ -60,11 +60,15 @@ def logout():
     logout_user()
     return redirect(url_for('login'))
 
-@app.route('/chat')
+@app.route('/chat/<int:receiver_user_id>')
 @login_required
-def user_chat():
-    # user = db.get_or_404(User, id)
-    return render_template("chat.html", user='asd')
+def user_chat(receiver_user_id):
+    user_id = current_user.id
+    messages_recived = Message.query.filter_by(receiver_id=user_id).all()
+    messages_sended = Message.query.filter_by(sender_id=user_id).all()
+    print(f'messages_recived={messages_recived}')
+    print(f'messages_sended={messages_sended}')
+    return render_template("chat.html", active_user=current_user.username)
 
 if __name__ == '__main__':
     with app.app_context():
