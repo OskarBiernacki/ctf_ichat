@@ -1,7 +1,9 @@
+import datetime
 from flask import Flask, render_template, redirect, url_for, request, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 import os
+from colorama import Fore
 
 app = Flask('chat_chat_chat_ctf')
 app.config['SECRET_KEY'] = 'random_secret_key_2929271738391'
@@ -21,6 +23,11 @@ class Message(db.Model):
     receiver_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     send_time = db.Column(db.DateTime, nullable=False)
     content = db.Column(db.String(150), nullable=False)
+
+    def __str__(self):
+            return f'Message from {self.sender_id} to {self.receiver_id} at {self.send_time}: {self.content}'
+
+    
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -62,24 +69,54 @@ def logout():
     logout_user()
     return redirect(url_for('login'))
 
-@app.route('/chat/send/<int:receiver_user_id>')
+@app.route('/chat/<int:receiver_user_id>/send', methods=['GET'])
 @login_required
 def user_chat_send_message(receiver_user_id):
-    user_id = current_user.id
-    receiver_user = User.query.get(receiver_user_id)
-    if receiver_user is None:
-        return redirect(url_for('home'))
-    return render_template("chat.html", active_user=current_user.username)
+    if request.method == 'GET':
+        try:
+            user_id = current_user.id
+            content=request.args.get('content')
+            send_message(user_id, receiver_user_id, content)
+        except Exception as e:
+            print(f'Errorro: {e}')
+
+    return redirect(f'/chat/{receiver_user_id}')
 
 @app.route('/chat/<int:receiver_user_id>')
 @login_required
 def user_chat(receiver_user_id):
     user_id = current_user.id
-    messages_recived = Message.query.filter_by(receiver_id=user_id).all()
-    messages_sended = Message.query.filter_by(sender_id=user_id).all()
-    print(f'messages_recived={messages_recived}')
-    print(f'messages_sended={messages_sended}')
-    return render_template("chat.html", active_user=current_user.username)
+    messages_recived = Message.query.filter_by(receiver_id=user_id).filter_by(sender_id=receiver_user_id).all()
+    messages_sended = Message.query.filter_by(sender_id=user_id).filter_by(receiver_id=receiver_user_id).all()
+
+    conversation = messages_sended+messages_recived
+    conversation.sort(key=lambda message: message.send_time)
+
+    html_messages_content = ''
+    for message in conversation:
+        if message.sender_id == user_id:
+            print(f'{Fore.BLUE}{message.content}')
+            html_messages_content += f'<div class="message sent">'
+            html_messages_content +=f'<div class="sender">{current_user.username}</div>'
+            html_messages_content +=f'<div class="content">{message.content}</div>'
+            html_messages_content += f'</div>'
+        else:
+            print(f'{Fore.GREEN}{message.content}')
+            html_messages_content += f'<div class="message received">'
+            html_messages_content +=f'<div class="sender">{User.query.filter_by(id=receiver_user_id).first().username}</div>'
+            html_messages_content +=f'<div class="content">{message.content}</div>'
+            html_messages_content += f'</div>'
+
+    return render_template("chat.html", active_user=current_user.username, receiver_user_id=receiver_user_id, messages_content=html_messages_content)
+
+def send_message(sender_id, receiver_id, content):
+    new_message = Message(sender_id=sender_id, receiver_id=receiver_id, content=content, send_time=datetime.datetime.now())
+    db.session.add(new_message)
+    db.session.commit()
+def create_user(username, password, is_admin=False):
+    new_user = User(username=username, password=password)
+    db.session.add(new_user)
+    db.session.commit()
 
 if __name__ == '__main__':
     if os.path.exists('instance/users.db'):
@@ -89,8 +126,8 @@ if __name__ == '__main__':
         db.create_all()
     
         print('Creating admin user...')
-        admin = User(username='admin', password='admin', is_admin=True)
-        db.session.add(admin)
-        db.session.commit()
+        create_user(username='admin', password='admin', is_admin=True)
+        create_user(username='Bob', password='password123')
+        send_message(sender_id=2, receiver_id=1, content='Hello Admin! I\'m Bob!')
 
-    app.run(debug=True)
+    app.run(debug=False)

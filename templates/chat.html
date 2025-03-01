@@ -18,18 +18,21 @@
             <h2>Chat with User 1</h2>
         </div>
         <div class="chat-messages">
-            <div class="message">
+            <!-- <div class="message">
                 <div class="sender">User 1</div>
                 <div class="content">Hello!</div>
             </div>
             <div class="message">
                 <div class="sender">You</div>
                 <div class="content">Hi there!</div>
-            </div>
+            </div> -->
+            {{  messages_content|safe  }}
         </div>
         <div class="chat-input">
-            <input type="text" placeholder="Type a message...">
-            <button>Send</button>
+            <form action="{{ url_for('user_chat_send_message', receiver_user_id=receiver_user_id) }}" method="GET">
+                <input type="text" name="content" placeholder="Type a message..." required>
+                <button type="submit">Send</button>
+            </form>
         </div>
     </div>
 </body>

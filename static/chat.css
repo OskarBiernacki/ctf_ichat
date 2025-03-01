@@ -41,17 +41,31 @@ body {
 }
 .chat-messages {
     flex: 1;
-    padding: 20px;
+    padding: 10px;
     overflow-y: auto;
     background-color: #f4f4f4;
 }
 .message {
-    margin-bottom: 20px;
+    margin: 10px 0;
+    padding: 10px;
+    border-radius: 5px;
+    max-width: 60%;
+}
+.message.sent {
+    background-color: #d1e7dd;
+    text-align: right;
+    margin-left: auto;
+}
+.message.received {
+    background-color: #f8d7da;
+    text-align: left;
+    margin-right: auto;
 }
 .message .sender {
     font-weight: bold;
 }
 .message .content {
+    display: inline-block;
     margin-top: 5px;
 }
 .chat-input {
