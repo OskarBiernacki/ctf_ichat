@@ -12,11 +12,27 @@
             <label for="username">Username:</label>
             <input type="text" id="username" name="username" required>
             <label for="password">Password:</label>
-            <input type="password" id="password" name="password" required>
-            <input type="password" id="password" name="password" required>
-            <button type="submit">Register</button>
+            <input type="password" id="password" name="password" onchange="validatePasswords()" required>
+            <label for="password_retype">Retype password:</label>
+            <input type="password" id="password_retype" name="password_retype" onchange="validatePasswords()" required>
+            <label id="info_lable" style="color: brown; font-weight: lighter;"></label>
+            <button type="submit" id="submit_button">Register</button>
         </form>
         <p>Already have an account? <a href="{{ url_for('login') }}">Login here</a></p>
     </div>
+    <script>
+        function validatePasswords() {
+            var password = document.getElementById("password").value;
+            var passwordRetype = document.getElementById("password_retype").value;
+            if (password !== passwordRetype) {
+                document.getElementById("submit_button").disabled = true;
+                document.getElementById("info_lable").innerHTML = "Passwords do not match!";
+            }
+            else {
+                document.getElementById("submit_button").disabled = false;
+                document.getElementById("info_lable").innerHTML = "";
+            }
+        }
+    </script>
 </body>
 </html>

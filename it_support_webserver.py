@@ -4,7 +4,7 @@ from flask_login import LoginManager, UserMixin, login_user, login_required, log
 import os
 
 app = Flask('chat_chat_chat_ctf')
-app.config['SECRET_KEY'] = 'your_secret_key'
+app.config['SECRET_KEY'] = 'random_secret_key_2929271738391'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
 db = SQLAlchemy(app)
 login_manager = LoginManager(app)
@@ -41,8 +41,8 @@ def login():
             login_user(user)
             return redirect(url_for('home'))
         else:
-            flash('Login Unsuccessful. Please check username and password', 'danger')
-    return render_template('login.html')
+            return render_template('login.html', bad_login=True)
+    return render_template('login.html', bad_login=False)
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -61,6 +61,15 @@ def register():
 def logout():
     logout_user()
     return redirect(url_for('login'))
+
+@app.route('/chat/send/<int:receiver_user_id>')
+@login_required
+def user_chat_send_message(receiver_user_id):
+    user_id = current_user.id
+    receiver_user = User.query.get(receiver_user_id)
+    if receiver_user is None:
+        return redirect(url_for('home'))
+    return render_template("chat.html", active_user=current_user.username)
 
 @app.route('/chat/<int:receiver_user_id>')
 @login_required
