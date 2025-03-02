@@ -38,6 +38,26 @@ body {
     color: white;
     padding: 20px;
     text-align: center;
+    position: relative;
+}
+.chat-header h2 {
+    margin: 0;
+}
+.logout-button {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: #dc3545;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    cursor: pointer;
+}
+.logout-button:hover {
+    background-color: #c82333;
 }
 .chat-messages {
     flex: 1;
@@ -91,4 +111,30 @@ body {
 }
 .chat-input button:hover {
     background-color: #0056b3;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.profile-pic {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.user-info h2 {
+    margin: 0;
+}
+
+a {
+    color: inherit; 
+    text-decoration: none; 
+}
+
+a:hover {
+    text-decoration: underline;
 }

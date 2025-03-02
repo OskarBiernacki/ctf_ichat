@@ -8,25 +8,22 @@
 </head>
 <body>
     <div class="sidebar">
-        <h2>Hello {{ active_user }}</h2>
-        <div class="user">User 1</div>
+        <div class="user-info">
+            <img class="profile-pic" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTKAyHUwfu-mtzTdTBMpWWBCWbk7YEBTx2GOw&s" alt="Profile Picture">
+            <h2>{{ active_user }}</h2>
+        </div>
+        {{ html_contacts_content|safe }}
+        <!-- <div class="user">User 1</div>
         <div class="user">User 2</div>
-        <div class="user">User 3</div>
+        <div class="user">User 3</div> -->
     </div>
     <div class="chat-container">
         <div class="chat-header">
-            <h2>Chat with User 1</h2>
+            <h2>IChat</h2>
+            <a href="{{ url_for('logout') }}" class="logout-button">Logout</a>
         </div>
         <div class="chat-messages">
-            <!-- <div class="message">
-                <div class="sender">User 1</div>
-                <div class="content">Hello!</div>
-            </div>
-            <div class="message">
-                <div class="sender">You</div>
-                <div class="content">Hi there!</div>
-            </div> -->
-            {{  messages_content|safe  }}
+            {{ messages_content|safe }}
         </div>
         <div class="chat-input">
             <form action="{{ url_for('user_chat_send_message', receiver_user_id=receiver_user_id) }}" method="GET">

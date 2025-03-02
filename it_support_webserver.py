@@ -36,7 +36,11 @@ def load_user(user_id):
 @app.route('/')
 @login_required
 def home():
-    return render_template('home.html')
+    try:
+        return redirect(f'/chat/{get_contacts_users(current_user.id)[0]}')
+    except Exception as e:
+        print(f'Error: {e}')
+        return redirect(url_for(f'logout'))
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -59,7 +63,7 @@ def register():
         new_user = User(username=username, password=password)
         db.session.add(new_user)
         db.session.commit()
-        flash('Your account has been created!', 'success')
+        send_message(sender_id=1, receiver_id=new_user.id, content='Hello! I\'m the admin!')
         return redirect(url_for('login'))
     return render_template('register.html')
 
@@ -78,7 +82,7 @@ def user_chat_send_message(receiver_user_id):
             content=request.args.get('content')
             send_message(user_id, receiver_user_id, content)
         except Exception as e:
-            print(f'Errorro: {e}')
+            print(f'Error: {e}')
 
     return redirect(f'/chat/{receiver_user_id}')
 
@@ -89,8 +93,17 @@ def user_chat(receiver_user_id):
     messages_recived = Message.query.filter_by(receiver_id=user_id).filter_by(sender_id=receiver_user_id).all()
     messages_sended = Message.query.filter_by(sender_id=user_id).filter_by(receiver_id=receiver_user_id).all()
 
+    print(get_contacts_users(user_id))
     conversation = messages_sended+messages_recived
     conversation.sort(key=lambda message: message.send_time)
+    
+    reciver_user = User.query.filter_by(id=receiver_user_id).first()
+    try:
+        if reciver_user is None:
+            return redirect(f'/chat/{get_contacts_users(user_id)[0]}')
+    except Exception as e:
+        print(f'Error: {e}')
+        return redirect(url_for('logout'))
 
     html_messages_content = ''
     for message in conversation:
@@ -103,11 +116,18 @@ def user_chat(receiver_user_id):
         else:
             print(f'{Fore.GREEN}{message.content}')
             html_messages_content += f'<div class="message received">'
-            html_messages_content +=f'<div class="sender">{User.query.filter_by(id=receiver_user_id).first().username}</div>'
+            html_messages_content +=f'<div class="sender">{reciver_user.username}</div>'
             html_messages_content +=f'<div class="content">{message.content}</div>'
             html_messages_content += f'</div>'
 
-    return render_template("chat.html", active_user=current_user.username, receiver_user_id=receiver_user_id, messages_content=html_messages_content)
+    html_contacts_content = ''
+    for contact_user_id in get_contacts_users(user_id):
+        contact_user = User.query.filter_by(id=contact_user_id).first()
+        if contact_user is None:
+            continue
+        html_contacts_content += f'<a href="/chat/{contact_user_id}"><div class="user">{contact_user.username}</div></a>'
+
+    return render_template("chat.html", active_user=current_user.username, receiver_user_id=receiver_user_id, messages_content=html_messages_content, html_contacts_content=html_contacts_content)
 
 def send_message(sender_id, receiver_id, content):
     new_message = Message(sender_id=sender_id, receiver_id=receiver_id, content=content, send_time=datetime.datetime.now())
@@ -117,6 +137,20 @@ def create_user(username, password, is_admin=False):
     new_user = User(username=username, password=password)
     db.session.add(new_user)
     db.session.commit()
+def get_contacts_users(user_id):
+    contacts = []
+    messages = Message.query.filter_by(receiver_id=user_id).all() + Message.query.filter_by(sender_id=user_id).all()
+    messages.sort(key=lambda message: message.send_time)
+    messages.reverse()
+    for message in messages:
+        if message.sender_id not in contacts and message.sender_id != user_id:
+            contacts.append(message.sender_id)
+        if message.receiver_id not in contacts and message.receiver_id != user_id:
+            contacts.append(message.receiver_id)
+        if message.sender_id == user_id and message.receiver_id == user_id and user_id not in contacts:
+            contacts.append(user_id)
+    return contacts
+
 
 if __name__ == '__main__':
     if os.path.exists('instance/users.db'):
@@ -128,6 +162,12 @@ if __name__ == '__main__':
         print('Creating admin user...')
         create_user(username='admin', password='admin', is_admin=True)
         create_user(username='Bob', password='password123')
+        create_user(username='Zimbabwe King', password='password123')
         send_message(sender_id=2, receiver_id=1, content='Hello Admin! I\'m Bob!')
+        send_message(sender_id=1, receiver_id=2, content='??')
+        send_message(sender_id=2, receiver_id=1, content='Nothing')
+        send_message(sender_id=1, receiver_id=1, content='Testing')
+        send_message(sender_id=3, receiver_id=1, content='Hello I\'m Zimbabwe King!')
+        send_message(sender_id=1, receiver_id=2, content='Baka')
 
     app.run(debug=False)
