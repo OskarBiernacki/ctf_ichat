@@ -1,4 +1,4 @@
-from ichat import app, db
+from ichat import app, db, BotMenager
 from ichat.utils import create_user, send_message
 import os
 
@@ -8,7 +8,9 @@ if __name__ == '__main__':
         os.remove('instance/users.db')
     with app.app_context():
         db.create_all()
-    
+
+        botMenager = BotMenager('BotsCharacters.txt')
+        
         print('Creating admin user...')
         create_user(username='admin', password='admin', is_admin=True)
         create_user(username='Bob', password='password123')
