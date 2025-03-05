@@ -38,7 +38,9 @@ def register():
         new_user = User(username=username, password=password)
         db.session.add(new_user)
         db.session.commit()
-        send_message(sender_id=1, receiver_id=new_user.id, content='Hello! I\'m the admin!')
+        id_admin=User.query.filter_by(username='admin').first().id
+        if id_admin != new_user.id:
+            send_message(sender_id=id_admin, receiver_id=new_user.id, content='Hello! I\'m the admin!')
         return redirect(url_for('login'))
     return render_template('register.html')
 
