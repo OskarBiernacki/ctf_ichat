@@ -11,6 +11,7 @@ def create_user(username, password, is_admin=False):
     new_user = User(username=username, password=password, is_admin=is_admin)
     db.session.add(new_user)
     db.session.commit()
+    return new_user.id
 
 def get_contacts_users(user_id):
     contacts = []
