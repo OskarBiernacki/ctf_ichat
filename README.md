@@ -76,16 +76,8 @@ The project includes a variety of bot users with funny and obvious scam messages
 
 ## Contributing
 
-We welcome contributions to improve the project. Feel free to fork the repository and submit pull requests.
-
-## License
-
-This project is licensed under the MIT License. See the LICENSE file for details.
+CTF reasons
 
 ## Acknowledgements
-
-Special thanks to all contributors and the open-source community for their support and inspiration.
-
----
 
 Enjoy chatting with CTF IChat! If you have any questions or feedback, please open an issue on GitHub.
