@@ -38,26 +38,6 @@ Welcome to CTF IChat, a fun and interactive chat application designed for CTF (C
     python run.py
     ```
 
-## Project Structure
-ctf_ichat/
-│ ├── instance 
-| │ └── users.db 
-│ ├── templates/ 
-| │ ├── chat.html 
-| │ ├── login.html  
-| | ├── register.html 
-| | ├── admin_panel.html
-│ ├── static/  
-| | ├── site_style.css 
-| │ ├── chat.css 
-│ ├── ctf_ichat/ 
-| │ ├── init.py 
-| │ ├── models.py 
-| │ ├── routes.py 
-| │ ├── utils.py 
-| │ ├── botMeanger.py 
-│ ├── BotsCharacters.txt 
-└── run.py
 ## Bots
 
 The project includes a variety of bot users with funny and obvious scam messages. Here are some examples:

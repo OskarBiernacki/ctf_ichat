@@ -7,8 +7,8 @@ def send_message(sender_id, receiver_id, content):
     db.session.add(new_message)
     db.session.commit()
 
-def create_user(username, password, is_admin=False):
-    new_user = User(username=username, password=password, is_admin=is_admin)
+def create_user(username, password, is_admin=False, is_bot=False):
+    new_user = User(username=username, password=password, is_admin=is_admin, is_bot=is_bot)
     db.session.add(new_user)
     db.session.commit()
     return new_user.id
