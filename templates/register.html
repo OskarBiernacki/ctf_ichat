@@ -15,7 +15,7 @@
             <input type="password" id="password" name="password" onchange="validatePasswords()" required>
             <label for="password_retype">Retype password:</label>
             <input type="password" id="password_retype" name="password_retype" onchange="validatePasswords()" required>
-            <label id="info_lable" style="color: brown; font-weight: lighter;"></label>
+            <label id="info_lable" style="color: brown; font-weight: lighter;">{{ bad_register }}</label>
             <button type="submit" id="submit_button">Register</button>
         </form>
         <p>Already have an account? <a href="{{ url_for('login') }}">Login here</a></p>

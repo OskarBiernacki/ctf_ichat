@@ -35,6 +35,10 @@ def register():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
+
+        if User.query.filter_by(username=username).first() is not None:
+            return render_template('register.html', bad_register='Username already exists!')
+
         new_user = User(username=username, password=password)
         db.session.add(new_user)
         db.session.commit()
