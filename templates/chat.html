@@ -13,13 +13,16 @@
             <h2>{{ active_user }}</h2>
         </div>
         {{ html_contacts_content|safe }}
-        <!-- <div class="user">User 1</div>
+        <!-- 
+        <div class="user">User 1</div>
         <div class="user">User 2</div>
-        <div class="user">User 3</div> -->
+        <div class="user">User 3</div> 
+        -->
     </div>
     <div class="chat-container">
         <div class="chat-header">
             <h2>IChat</h2>
+            {{ admin_button|safe }}
             <a href="{{ url_for('logout') }}" class="logout-button">Logout</a>
         </div>
         <div class="chat-messages">
@@ -36,6 +39,7 @@
 </html>
 
 <script>
+    //It's commented for your own good sake
     // setInterval(function() {
     //     location.reload();
     // }, 10000);

@@ -101,4 +101,15 @@ def user_chat(receiver_user_id):
             continue
         html_contacts_content += f'<a href="/chat/{contact_user_id}"><div class="user">{contact_user.username}</div></a>'
 
-    return render_template("chat.html", active_user=current_user.username, receiver_user_id=receiver_user_id, messages_content=html_messages_content, html_contacts_content=html_contacts_content)
+    admin_button = ''
+    if current_user.is_admin:
+        admin_button = f'<a href="{ url_for('admin_panel') }" class="logout-button" style="margin-right: 100px">admin-panel</a>'
+
+    return render_template("chat.html", active_user=current_user.username, receiver_user_id=receiver_user_id, messages_content=html_messages_content, html_contacts_content=html_contacts_content, admin_button=admin_button)
+
+@app.route('/admin-panel')
+@login_required
+def admin_panel():
+    if not current_user.is_admin:
+        abort(404)
+    return render_template('admin_panel.html')

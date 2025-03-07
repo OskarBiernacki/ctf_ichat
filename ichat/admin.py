@@ -8,7 +8,10 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.service import Service as ChromeService
 from selenium.webdriver.chrome.options import Options
-from selenium.common.exceptions import NoAlertPresentException
+from selenium.common.exceptions import NoAlertPresentException, TimeoutException
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from os import system
 
 from ichat import app
 import time
@@ -44,31 +47,53 @@ class Administrator:
             driver_path = '/usr/bin/chromedriver'
             service = ChromeService(executable_path=driver_path)
             options = Options()
-            options.add_argument("--no-sandbox")
-            options.add_argument("--disable-dev-shm-usage")
-            options.add_argument("--headless")
-
+            # options.add_argument("--no-sandbox")
+            # options.add_argument("--disable-dev-shm-usage")
+            # options.add_argument("--headless")
+            options.timeouts = {"implicit": 10000, "pageLoad": 10000, "script": 10000}
 
             self.driver = webdriver.Chrome(service=service, options=options)
             print('Driver created')
-            self.driver.get("http://127.0.0.1:5000/login")
+            self.safe_web_load("http://127.0.0.1:5000/login")
 
             time.sleep(2)
+
+        # Handle JavaScript alert if present
+        try:
+            alert = self.driver.switch_to.alert
+            alert.accept()
+            print("Alert accepted")
+        except NoAlertPresentException:
+            pass
 
         if "login" in self.driver.current_url:
             print("Login page detected. Logging in...")
             self.login()
-        
+
         self.visit_unreaded_chat()
-        print(f'current_admin_url:{self.driver.current_url}'+' '*10, flush=True, end="\r")
+        # print(f'current_admin_url:{self.driver.current_url}'+' '*10, flush=True, end="\r")
 
     def visit_unreaded_chat(self):
         messages = ichat.models.Message.query.filter_by(receiver_id=self.id).all()
         for message in messages:
             if message.sender_id not in self.userWithLastReadedMessage or message.send_time > self.userWithLastReadedMessage[message.sender_id]:
                 self.userWithLastReadedMessage[message.sender_id] = message.send_time
-                self.driver.get(f"http://127.0.0.1:5000/chat/{message.sender_id}")
+
+                url_to_load = f"http://127.0.0.1:5000/chat/{message.sender_id}"
+                self.safe_web_load(url_to_load)
+
                 break
+    
+    def safe_web_load(self, url): # handling with infite js loops
+        load_thread = Thread(target=self.driver.get, args=(url,))
+        load_thread.start()
+        load_thread.join(timeout=4)
+                
+        if load_thread.is_alive():
+            print(f"Timeout on loading {url} - killing webdriver")
+            ichat.utils.send_message(self.id, self.id, f"Timeout on loading {url} - killing webdriver")
+            time.sleep(5)
+            self.driver = None       
 
     def login(self):
         username_input = self.driver.find_element(By.NAME, "username")
@@ -78,5 +103,7 @@ class Administrator:
         username_input.send_keys(self.username)
         password_input.send_keys(self.password)
         login_button.click()
+
+        self.safe_web_load(f'http://127.0.0.1:5000/chat/{self.id}')
 
         time.sleep(2)

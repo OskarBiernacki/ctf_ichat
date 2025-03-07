@@ -20,8 +20,4 @@ if __name__ == '__main__':
         botMaintananceLoop = Thread(target=botMenager.startBotMaintananceLoop)
         botMaintananceLoop.start()
 
-        #to do
-        #ograniczenia w tworzeniu kont, konta o tej samej nazwie, konta min 5 znakow
-        #blokada wysylania do nieistniejacych userow
-
     app.run(debug=False)
