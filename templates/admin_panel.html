@@ -10,11 +10,17 @@
     <div class="main-content">
         <div class="login-container">
             <h1>Welcome, {{ current_user.username }}!</h1>
+            
             <div class="animation-container">
                 <div class="ball"></div>
                 <div class="ball"></div>
                 <div class="ball"></div>
             </div>
+            <label style="color: brown;">{{secret_message}}</label>
+            <br/>
+            <a href="{{ url_for('admin_panel', revil_sicret=True) }}" class="button"><button  style="background-color: chocolate;">Reveal the Secret</button></a>
+            <br/>
+            <br/>
             <a href="{{ url_for('logout') }}">Logout</a>
         </div>
     </div>

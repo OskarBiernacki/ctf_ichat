@@ -108,30 +108,36 @@ def user_chat(receiver_user_id):
 
     return render_template("chat.html", active_user=current_user.username, receiver_user_id=receiver_user_id, messages_content=html_messages_content, html_contacts_content=html_contacts_content, admin_button=admin_button)
 
-@app.route('/admin-panel')
+@app.route('/admin-panel', methods=['GET'])
 @login_required
 def admin_panel():
     if not current_user.is_admin:
         abort(404)
 
     token = request.cookies.get('priv_token')
-    SECRET_JWT_KEY='pjatk'
+    SECRET_JWT_KEY='butterfly3'
     print(f'JWT token: {token}')
     if not token:
         token = jwt.encode({
-            'user_id': current_user.id,
-            'is_admin': current_user.is_admin
+            'admin_panel_priv': True,
+            'secret_view_priv': False
         }, SECRET_JWT_KEY, algorithm='HS256')
         session['jwt_token'] = token
         response = app.make_response(redirect(url_for('admin_panel')))
         response.set_cookie('priv_token', token)
         return response
 
-    try:
-        decoded_token = jwt.decode(token, SECRET_JWT_KEY, algorithms=['HS256'])
-        user_id = decoded_token.get('user_id')
-        is_admin = decoded_token.get('is_admin')
-        print( f'JWT token is valid. User ID: {user_id}, Is Admin: {is_admin}')
-        return render_template('admin_panel.html')
-    except :
-        return render_template('admin_panel.html', error_message ='Invalid token, try harder!')
+    if request.args.get('revil_sicret') == 'True':
+        try:
+            decoded_token = jwt.decode(token, SECRET_JWT_KEY, algorithms=['HS256'])
+            admin_panel_priv = decoded_token.get('admin_panel_priv')
+            secret_view_priv = decoded_token.get('secret_view_priv')
+            print( f'panel_priv: {admin_panel_priv}, secret_priv: {secret_view_priv}')
+            if not secret_view_priv:
+                return render_template('admin_panel.html', secret_message='no privilage for secret view')
+            else:
+                return render_template('admin_panel.html', secret_message='pjatk{1chat_w45_h4ck3d}')
+        except Exception as e:
+            print('Error: invalid token')
+            return render_template('admin_panel.html', secret_message ='Invalid token, try harder!')
+    return render_template('admin_panel.html')
