@@ -1,8 +1,9 @@
-from flask import render_template, redirect, url_for, request, flash, abort
+from flask import render_template, redirect, url_for, request, flash, abort, session
 from flask_login import login_user, login_required, logout_user, current_user
 from ichat import app, db, login_manager
 from ichat.models import User, Message
 from ichat.utils import send_message, get_contacts_users
+import jwt
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -112,4 +113,25 @@ def user_chat(receiver_user_id):
 def admin_panel():
     if not current_user.is_admin:
         abort(404)
-    return render_template('admin_panel.html')
+
+    token = request.cookies.get('priv_token')
+    SECRET_JWT_KEY='pjatk'
+    print(f'JWT token: {token}')
+    if not token:
+        token = jwt.encode({
+            'user_id': current_user.id,
+            'is_admin': current_user.is_admin
+        }, SECRET_JWT_KEY, algorithm='HS256')
+        session['jwt_token'] = token
+        response = app.make_response(redirect(url_for('admin_panel')))
+        response.set_cookie('priv_token', token)
+        return response
+
+    try:
+        decoded_token = jwt.decode(token, SECRET_JWT_KEY, algorithms=['HS256'])
+        user_id = decoded_token.get('user_id')
+        is_admin = decoded_token.get('is_admin')
+        print( f'JWT token is valid. User ID: {user_id}, Is Admin: {is_admin}')
+        return render_template('admin_panel.html')
+    except :
+        return render_template('admin_panel.html', error_message ='Invalid token, try harder!')
