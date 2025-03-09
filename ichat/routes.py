@@ -104,7 +104,8 @@ def user_chat(receiver_user_id):
 
     admin_button = ''
     if current_user.is_admin:
-        admin_button = f'<a href="{ url_for('admin_panel') }" class="logout-button" style="margin-right: 100px">admin-panel</a>'
+        admin_panel_url = url_for('admin_panel') 
+        admin_button = f'<a href="{ admin_panel_url }" class="logout-button" style="margin-right: 100px">admin-panel</a>'
 
     return render_template("chat.html", active_user=current_user.username, receiver_user_id=receiver_user_id, messages_content=html_messages_content, html_contacts_content=html_contacts_content, admin_button=admin_button)
 
@@ -136,7 +137,8 @@ def admin_panel():
             if not secret_view_priv:
                 return render_template('admin_panel.html', secret_message='no privilage for secret view')
             else:
-                return render_template('admin_panel.html', secret_message='pjatk{1chat_w45_h4ck3d}')
+                return render_template('admin_panel.html', secret_message=open('flag.txt','r').read())
+                # return render_template('admin_panel.html', secret_message='flag{213123123_dadb_TEST}')
         except Exception as e:
             print('Error: invalid token')
             return render_template('admin_panel.html', secret_message ='Invalid token, try harder!')
