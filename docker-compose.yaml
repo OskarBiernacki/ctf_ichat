@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+    NAZWA:
+      container_name: ichat_ctf
+      build: .
+      image: ichat_ctf:latest
+      restart: unless-stopped
+      ports:
+        - 5000:5000
+    
