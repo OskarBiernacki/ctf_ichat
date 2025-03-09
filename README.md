@@ -5,38 +5,13 @@ Welcome to CTF IChat, a fun and interactive chat application designed for CTF (C
 ## Features
 
 - User registration and login
-- Real-time chat with other users
+- Real-time chat with other users (easter egg)
 - Bot users with funny scam messages
-- Admin user management
-- Secure password storage
+- Admin user bot that will read all mesages
 
 ## Installation
 
-1. Clone the repository:
-
-    ```sh
-    git clone https://github.com/yourusername/ctf_ichat.git
-    cd ctf_ichat
-    ```
-
-2. Create a virtual environment and activate it:
-
-    ```sh
-    python3 -m venv venv
-    source venv/bin/activate
-    ```
-
-3. Install the required dependencies:
-
-    ```sh
-    pip install -r requirements.txt
-    ```
-
-4. Run the application:
-
-    ```sh
-    python run.py
-    ```
+```docker compose up```
 
 ## Bots
 
@@ -53,10 +28,9 @@ The project includes a variety of bot users with funny and obvious scam messages
 1. Register a new user or log in with an existing account.
 2. Start chatting with other users or bots.
 3. Enjoy the humorous scam messages from the bot users.
+4. Stored XSS
+5. JWT cracking
 
-## Contributing
-
-CTF reasons
 
 ## Acknowledgements
 
