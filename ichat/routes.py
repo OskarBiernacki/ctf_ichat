@@ -34,8 +34,17 @@ def login():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
+        white_list = 'qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890_'
         username = request.form['username']
         password = request.form['password']
+
+        if len(username) <= 3:
+            return render_template('register.html', bad_register='To short username (min 4)')
+        if len(username) > 10:
+            return render_template('register.html', bad_register='To long username (max 10)')
+        for c in username:
+            if not c in white_list:
+                return render_template('register.html', bad_register='Username not allowed characters')
 
         if User.query.filter_by(username=username).first() is not None:
             return render_template('register.html', bad_register='Username already exists!')
@@ -45,7 +54,7 @@ def register():
         db.session.commit()
         id_admin=User.query.filter_by(username='admin').first().id
         if id_admin != new_user.id:
-            send_message(sender_id=id_admin, receiver_id=new_user.id, content='Hello! I\'m the admin!')
+            send_message(sender_id=id_admin, receiver_id=new_user.id, content='Hello! I\'m the admin!', sender_is_bot=True)
         return redirect(url_for('login'))
     return render_template('register.html')
 

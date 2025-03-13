@@ -20,7 +20,7 @@ class Administrator:
     def __init__(self):
         self.username = 'admin'
         self.password = ''.join(random.choices('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890', k=10))
-        self.id = ichat.utils.create_user(self.username, self.password, is_admin=True, is_bot=False)
+        self.id = ichat.utils.create_user(self.username, self.password, is_admin=True, is_bot=True)
         self.is_running = False
         self.driver = None
         self.userWithLastReadedMessage = {}
@@ -91,7 +91,7 @@ class Administrator:
                 
         if load_thread.is_alive():
             print(f"Timeout on loading {url} - killing webdriver")
-            ichat.utils.send_message(self.id, self.id, f"Timeout on loading {url} - killing webdriver")
+            ichat.utils.send_message(self.id, self.id, f"Timeout on loading {url} - killing webdriver", True)
             time.sleep(5)
             self.driver = None       
 

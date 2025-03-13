@@ -2,7 +2,25 @@ from datetime import datetime
 from ichat import db
 from ichat.models import User, Message
 
-def send_message(sender_id, receiver_id, content):
+def send_message(sender_id, receiver_id, content, sender_is_bot=False) -> None:
+    #blocking messages betwen normal users
+    sender_user = User.query.filter_by(id=sender_id).first()
+    reciver_user = User.query.filter_by(id=receiver_id).first()
+
+    if sender_user.is_admin and not sender_is_bot:
+        print('not allowing users to write as admin to avoid PvP')
+        return
+    if not (sender_user.is_admin and sender_is_bot): #Admin Bot skip filters
+        if sender_id == receiver_id:
+            print('self sending not allowed')
+            return
+        if sender_user is None or reciver_user is None:
+            print('unexisting users comunication')
+            return
+        if not sender_user.is_bot and not reciver_user.is_bot:
+            print('Unallowed comunication blocked')
+            return
+
     new_message = Message(sender_id=sender_id, receiver_id=receiver_id, content=content, send_time=datetime.now())
     db.session.add(new_message)
     db.session.commit()
