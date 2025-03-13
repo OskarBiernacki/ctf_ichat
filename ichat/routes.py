@@ -26,7 +26,10 @@ def login():
         user = User.query.filter_by(username=username).first()
         if user and user.password == password:
             login_user(user)
-            return redirect(url_for('home'))
+            resp = redirect(url_for('home'))
+            if user.is_admin:
+                resp.set_cookie("sicret_bot_cookie", "IHhioasd232JAHSD9213hb", httponly=True)
+            return resp
         else:
             return render_template('login.html', bad_login=True)
     return render_template('login.html', bad_login=False)
@@ -71,7 +74,10 @@ def user_chat_send_message(receiver_user_id):
         try:
             user_id = current_user.id
             content = request.args.get('content')
-            send_message(user_id, receiver_user_id, content)
+            if request.cookies.get('sicret_bot_cookie')=="IHhioasd232JAHSD9213hb":
+                send_message(user_id, receiver_user_id, content, True)
+            else:
+                send_message(user_id, receiver_user_id, content)
         except Exception as e:
             print(f'Error: {e}')
 
